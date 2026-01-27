@@ -13,11 +13,11 @@ interface HeroProps {
 }
 
 const heroImages = [
-  'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=1200&h=600&fit=crop',
-  'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=1200&h=600&fit=crop',
-  'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=1200&h=600&fit=crop',
-  'https://images.unsplash.com/photo-1552883193-13316285cc89?w=1200&h=600&fit=crop',
-  'https://images.unsplash.com/photo-1441986300352-7e3dabf51c3f?w=1200&h=600&fit=crop',
+  '/WhatsApp Image 2026-01-26 at 8.21.38 PM.jpeg',
+  '/WhatsApp Image 2026-01-27 at 8.42.38 PM.jpeg',
+  '/WhatsApp Image 2026-01-23 at 2.12.38 PM (1).jpeg',
+  '/WhatsApp Image 2026-01-23 at 2.12.38 PM (2).jpeg',
+  '/WhatsApp Image 2026-01-23 at 2.12.38 PM.jpeg',
 ];
 
 export function HeroSection({ title, subtitle, stats }: HeroProps) {

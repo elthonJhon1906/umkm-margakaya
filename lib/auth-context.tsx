@@ -140,7 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('admin_user', JSON.stringify(userData));
       
       // Redirect ke dashboard guest setelah login berhasil
-      router.push('/dashboard');
+      router.push('/admin/dashboard');
       
       return { success: true };
       
@@ -174,7 +174,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // Redirect ke dashboard guest setelah logout
     // Tidak menggunakan window.location.href agar tetap SPA
-    router.push('/dashboard');
+    router.push('/');
     router.refresh(); // Refresh untuk update layout
     
     console.log('✅ Redirected to /dashboard');
