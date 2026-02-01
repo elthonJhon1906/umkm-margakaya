@@ -12,7 +12,13 @@ export const metadata: Metadata = {
   },
   description: 'Katalog UMKM Desa Marga Kaya.',
   icons: {
-    icon: '/logo.png',
+    icon: [
+      { url: '/logo.png', type: 'image/png' },
+    ],
+    shortcut: ['/logo.png'],
+    apple: [
+      { url: '/logo.png' },
+    ],
   },
 };
 

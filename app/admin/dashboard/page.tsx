@@ -220,7 +220,7 @@ export default function AdminDashboardPage() {
 
   const handleEdit = (e: React.MouseEvent, slug: string) => {
     e.stopPropagation();
-    router.push(`/admin/umkm/${slug}/edit`);
+    router.push(`/admin/umkm/edit/${slug}`);
   };
 
   const handleDelete = async (e: React.MouseEvent, id: number, name: string) => {
