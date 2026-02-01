@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, User, Lock, Home, AlertCircle } from 'lucide-react';
+import Image from 'next/image';
 
 export default function AdminLoginPage() {
   const [username, setUsername] = useState('');
@@ -45,8 +46,13 @@ export default function AdminLoginPage() {
   <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border border-[#DFDAD0]">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#2F6B4F]/10 rounded-full mb-4">
-            <User className="w-8 h-8 text-[#2F6B4F]" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4">
+          <Image
+          src={'/logo.png'}
+          alt='KKN Unila 2026'
+          width={100}
+          height={100}
+          />
           </div>
           <h1 className="text-3xl font-bold text-[#2F6B4F] mb-2">UMKM Desa Marga Kaya</h1>
           <p className="text-[#8B7B6F] text-sm">Admin Panel Login</p>

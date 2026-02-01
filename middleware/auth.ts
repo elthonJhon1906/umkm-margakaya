@@ -58,7 +58,6 @@ export function middleware(request: NextRequest) {
 function isValidDashboardRoute(pathname: string): boolean {
   // Daftar route dashboard yang valid (sesuaikan dengan struktur app/dashboard)
   const validDashboardRoutes = [
-    '/dashboard',
     '/dashboard/analytics',
     '/dashboard/profile',
     '/dashboard/settings',

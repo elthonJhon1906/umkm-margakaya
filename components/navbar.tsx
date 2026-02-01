@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { useAuth } from '@/app/admin/layout/AuthProvider';
-
+import Image from 'next/image';
 interface NavbarProps {
   title: string;
 }
@@ -45,18 +45,24 @@ export function Navbar({ title }: NavbarProps) {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <motion.div
-          className="text-xl font-bold"
+          className="text-xl font-bold flex items-center gap-4"
           style={{ color: '#2F6B4F' }}
           custom={0}
           variants={itemVariants}
           initial="hidden"
           animate="visible"
         >
-          {title}
+          <Image
+          src={'/logo.png'}
+          width={60}
+          height={60}
+          alt='KKN Unila 2026'
+          />
+          <span className='text-3xl'>{title}</span>
         </motion.div>
 
         <div className="flex items-center gap-8">
-          {['Beranda', 'Kontak'].map((item, index) => (
+          {['Beranda'].map((item, index) => (
             <motion.a
               key={item}
               href={`#${item.toLowerCase().replace(' ', '-')}`}

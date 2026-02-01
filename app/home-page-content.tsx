@@ -4,7 +4,7 @@ import { Navbar } from '../components/navbar';
 import { HeroSection } from '../components/hero-section';
 import { FeatureCards } from '../components/feature-cards';
 import { UMKMCardsSection } from '../components/umkm-cards-section';
-
+import Image from 'next/image';
 export function HomePageContent() {
   return (
     <>
@@ -38,14 +38,25 @@ export function HomePageContent() {
       <UMKMCardsSection />
 
       {/* Footer */}
-      <footer className="bg-[#3D3D3D] text-[#DFDAD0] py-12 px-6">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="mb-2" style={{ color: '#DFDAD0' }}>
+      <footer className="bg-[#0c4630] text-[#DFDAD0] py-8 px-6">
+        <div>
+          <div className="max-w-7xl mx-auto text-center">
+          <p className="mb-2" style={{ color: '#FFFFF' }}>
             © 2024 UMKM Desa Marga Kaya
           </p>
           <p className="text-[#B8B3A8] text-sm">
             Mendukung ekonomi lokal melalui platform digital
           </p>
+        </div>
+        <div className='flex items-center gap-2  w-fit rounded-2xl'>
+          <Image
+          src={'/logo.png'}
+          alt='KKN Unila 2026 Periode 1'
+          width={40}
+          height={40}
+          />
+          KKN Universitas Lampung Tahun 2026 Periode 1
+         </div>
         </div>
       </footer>
     </>
