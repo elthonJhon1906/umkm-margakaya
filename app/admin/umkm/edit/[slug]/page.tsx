@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/app/admin/layout/AuthProvider';
+import { adminToast } from '@/app/admin/layout/admin-alert';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,7 +26,6 @@ import {
 import { supabase } from '@/lib/supabase';
 import { generateSlug, generateUniqueSlug } from '@/lib/slug-helper';
 
-// Kategori yang sudah ditentukan
 const CATEGORY_OPTIONS = [
   'Kuliner',
   'Kerajinan', 
@@ -37,7 +37,6 @@ const CATEGORY_OPTIONS = [
   'Teknologi'
 ];
 
-// Interface untuk data UMKM
 interface UMKMData {
   id: number;
   name: string;
@@ -68,7 +67,6 @@ export default function EditUMPage() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [storageError, setStorageError] = useState<string>('');
   
-  // State untuk form
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -95,14 +93,12 @@ export default function EditUMPage() {
   const [autoSlug, setAutoSlug] = useState('');
   const [manualSlug, setManualSlug] = useState('');
 
-  // Protect route
   useEffect(() => {
     if (!authLoading && !isLoggedIn) {
-      router.push('/admin/login');
+  router.push('/login');
     }
   }, [isLoggedIn, authLoading, router]);
 
-  // Auto-generate slug saat nama berubah
   useEffect(() => {
     if (formData.name.trim()) {
       const slug = generateSlug(formData.name);
@@ -113,14 +109,12 @@ export default function EditUMPage() {
     }
   }, [formData.name]);
 
-  // Handle manual slug input
   const handleSlugChange = (value: string) => {
     const cleanSlug = generateSlug(value);
     setManualSlug(value);
     setFormData(prev => ({ ...prev, slug: cleanSlug }));
   };
 
-  // Test storage connection on mount
   useEffect(() => {
     const testStorageConnection = async () => {
       if (!isLoggedIn) return;
@@ -257,14 +251,18 @@ export default function EditUMPage() {
   const validateAndSetImage = (file: File, isMain: boolean) => {
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert(`Ukuran file "${file.name}" maksimal 5MB`);
+      adminToast.error('Ukuran file terlalu besar', undefined, {
+        description: `Ukuran file "${file.name}" maksimal 5MB`,
+      });
       return;
     }
 
     // Validate file type
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      alert(`File "${file.name}" bukan gambar (JPEG, PNG, GIF, WebP)`);
+      adminToast.error('Format file tidak didukung', undefined, {
+        description: `File "${file.name}" bukan gambar (JPEG, PNG, GIF, WebP)`,
+      });
       return;
     }
 
@@ -407,8 +405,8 @@ export default function EditUMPage() {
     e.preventDefault();
     
     if (!isLoggedIn || !umkm) {
-      alert('Anda harus login terlebih dahulu');
-      router.push('/admin/login');
+      adminToast.error('Anda harus login terlebih dahulu');
+  router.push('/login');
       return;
     }
 
@@ -607,7 +605,7 @@ export default function EditUMPage() {
         throw new Error(`Gagal menghapus UMKM: ${deleteError.message}`);
       }
 
-      alert('✅ UMKM berhasil dihapus!');
+  adminToast.success('UMKM berhasil dihapus!');
       
       // Redirect ke dashboard
       setTimeout(() => {
@@ -616,7 +614,7 @@ export default function EditUMPage() {
       }, 1000);
 
     } catch (err: any) {
-      alert(`❌ Gagal menghapus UMKM:\n\n${err.message}`);
+      adminToast.error('Gagal menghapus UMKM', err);
     } finally {
       setSaving(false);
     }
@@ -677,7 +675,7 @@ export default function EditUMPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#F8F5F0] py-8 px-4">
+  <div className="min-h-screen bg-linear-to-b from-white to-[#F8F5F0] py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6">
@@ -711,7 +709,7 @@ export default function EditUMPage() {
         {storageError && (
           <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+              <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
               <div>
                 <h3 className="font-medium text-red-800">⚠️ Storage Error</h3>
                 <p className="text-red-700 text-sm mt-1 whitespace-pre-line">{storageError}</p>

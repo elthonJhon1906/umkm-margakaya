@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/app/admin/layout/AuthProvider';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,8 @@ import {
   Loader2,
   AlertCircle
 } from 'lucide-react';
+
+import { adminToast } from '@/app/admin/layout/admin-alert';
 import { supabase } from '@/lib/supabase';
 
 // Interface untuk data UMKM
@@ -117,7 +119,7 @@ export default function AdminDashboardPage() {
   // Protect route
   useEffect(() => {
     if (!authLoading && !isLoggedIn) {
-      router.push('/admin/login');
+  router.push('/login');
     }
   }, [isLoggedIn, authLoading, router]);
 
@@ -246,10 +248,10 @@ export default function AdminDashboardPage() {
       
       // Refresh data
       await fetchUMKMData();
-      alert(`✅ UMKM "${name}" berhasil dihapus!`);
+      adminToast.success(`UMKM "${name}" berhasil dihapus!`);
       
     } catch (err: any) {
-      alert(`❌ Gagal menghapus UMKM: ${err.message}`);
+      adminToast.error('Gagal menghapus UMKM', err);
     }
   };
 
@@ -292,10 +294,10 @@ export default function AdminDashboardPage() {
         umkm.id === id ? { ...umkm, status: newStatus } : umkm
       ));
       
-      alert(`✅ Status UMKM "${name}" berhasil diubah menjadi ${newStatusText}!`);
+      adminToast.success(`Status UMKM "${name}" berhasil diubah menjadi ${newStatusText}!`);
       
     } catch (err: any) {
-      alert(`❌ Gagal mengubah status: ${err.message}`);
+      adminToast.error('Gagal mengubah status UMKM', err);
     } finally {
       const target = e.currentTarget as HTMLButtonElement;
       target.disabled = false;
@@ -539,7 +541,7 @@ export default function AdminDashboardPage() {
                       {/* Card Header */}
                       <div className="p-5 pt-8">
                         <div className="flex items-start gap-3 mb-4">
-                          <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#2F6B4F] to-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <div className="w-12 h-12 rounded-lg bg-linear-to-br from-[#2F6B4F] to-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
                             <Building2 className="w-6 h-6 text-white" />
                           </div>
                           <div className="flex-1 min-w-0">
@@ -563,11 +565,11 @@ export default function AdminDashboardPage() {
                         {/* Contact Info */}
                         <div className="space-y-2 mb-4">
                           <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Phone className="w-4 h-4 flex-shrink-0" />
+                            <Phone className="w-4 h-4 shrink-0" />
                             <span className="truncate">{formattedPhone}</span>
                           </div>
                           <div className="flex items-start gap-2 text-sm text-gray-600">
-                            <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                            <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
                             <span className="line-clamp-2">{umkm.address || 'Alamat belum diisi'}</span>
                           </div>
                         </div>

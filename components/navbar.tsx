@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Button } from './ui/button';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/app/admin/layout/AuthProvider';
 
 interface NavbarProps {
   title: string;
@@ -96,7 +96,7 @@ export function Navbar({ title }: NavbarProps) {
                 </Button>
               </div>
             ) : (
-              <Link href="/admin/login">
+              <Link href="/login">
                 <Button
                   size="sm"
                   variant="outline"

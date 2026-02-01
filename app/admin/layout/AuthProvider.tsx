@@ -25,7 +25,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkAuthStatus();
   }, []);
 
-  // Tambahkan useEffect untuk handle redirect otomatis
   useEffect(() => {
     if (isLoading) return;
 
@@ -35,31 +34,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isLoading 
     });
 
-    // Jika sudah login dan berada di halaman login, redirect ke dashboard guest
-    if (isLoggedIn && pathname === '/admin/login') {
-      console.log('✅ Logged in, redirecting to guest dashboard');
-      router.push('/dashboard');
+    if (isLoggedIn && pathname === '/login') {
+      console.log('✅ Logged in, redirecting to admin dashboard');
+      router.push('/admin/dashboard');
       return;
     }
 
-    // Jika belum login dan mencoba mengakses admin (kecuali login), redirect ke login
-    if (!isLoggedIn && pathname.startsWith('/admin') && pathname !== '/admin/login') {
+    if (!isLoggedIn && pathname.startsWith('/admin') && pathname !== '/login') {
       console.log('❌ Not logged in, redirecting to login');
-      router.push('/admin/login');
+      router.push('/login');
       return;
     }
 
-    // Jika sudah login dan mengakses root admin, redirect ke admin dashboard
     if (isLoggedIn && pathname === '/admin') {
       console.log('📊 Redirecting to admin dashboard');
       router.push('/admin/dashboard');
       return;
     }
 
-    // Jika belum login dan mengakses root admin, redirect ke login
     if (!isLoggedIn && pathname === '/admin') {
       console.log('🔐 Redirecting to login');
-      router.push('/admin/login');
+      router.push('/login');
       return;
     }
 

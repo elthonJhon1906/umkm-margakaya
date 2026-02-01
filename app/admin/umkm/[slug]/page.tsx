@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/app/admin/layout/AuthProvider';
+import { adminToast } from '@/app/admin/layout/admin-alert';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -52,7 +53,7 @@ export default function UMKMDetailPage() {
   // Protect route
   useEffect(() => {
     if (!isLoggedIn) {
-      router.push('/admin/login');
+  router.push('/login');
     }
   }, [isLoggedIn, router]);
 
@@ -156,10 +157,10 @@ export default function UMKMDetailPage() {
         throw error;
       }
       
-      alert('UMKM berhasil dihapus!');
+      adminToast.success('UMKM berhasil dihapus!');
       router.push('/admin/dashboard');
     } catch (err: any) {
-      alert(`Gagal menghapus UMKM: ${err.message}`);
+      adminToast.error('Gagal menghapus UMKM', err);
     } finally {
       setIsDeleting(false);
     }
@@ -186,10 +187,10 @@ export default function UMKMDetailPage() {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(window.location.href)
       .then(() => {
-        alert('Link berhasil disalin ke clipboard!');
+        adminToast.success('Link berhasil disalin ke clipboard!');
       })
       .catch(err => {
-        alert('Gagal menyalin link');
+        adminToast.error('Gagal menyalin link', err);
       });
   };
 
@@ -454,7 +455,7 @@ export default function UMKMDetailPage() {
                   </div>
                 </div>
               ) : (
-                <div className="relative h-64 md:h-96 bg-gradient-to-br from-[#2F6B4F] to-[#1E4A3A]">
+                <div className="relative h-64 md:h-96 bg-linear-to-br from-[#2F6B4F] to-[#1E4A3A]">
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
                     <Building2 className="w-24 h-24 mb-4 opacity-90" />
                     <p className="text-xl font-semibold">{umkm.name}</p>
@@ -483,7 +484,7 @@ export default function UMKMDetailPage() {
                       <button
                         key={index}
                         onClick={() => setActiveImageIndex(index)}
-                        className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                        className={`shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
                           index === activeImageIndex 
                             ? 'border-[#2F6B4F] ring-2 ring-[#2F6B4F]/20' 
                             : 'border-gray-300 hover:border-gray-400'
@@ -537,7 +538,7 @@ export default function UMKMDetailPage() {
               <div className="space-y-6">
                 {/* Telepon */}
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#2F6B4F]/10 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-[#2F6B4F]/10 flex items-center justify-center shrink-0">
                     <Phone className="w-5 h-5 text-[#2F6B4F]" />
                   </div>
                   <div>
@@ -555,7 +556,7 @@ export default function UMKMDetailPage() {
 
                 {/* Alamat */}
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#2F6B4F]/10 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-[#2F6B4F]/10 flex items-center justify-center shrink-0">
                     <MapPin className="w-5 h-5 text-[#2F6B4F]" />
                   </div>
                   <div>

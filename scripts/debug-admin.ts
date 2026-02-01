@@ -1,242 +1,235 @@
 // scripts/debug-admin.ts
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
+
+// Gunakan credentials langsung (sama dengan debug-real.ts)
+const SUPABASE_URL = 'https://idunloffuvlackboopge.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlkdW5sb2ZmdXZsYWNrYm9vcGdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkyODUyMjgsImV4cCI6MjA4NDg2MTIyOH0.f_1R_tfF3Y1Ojjh9AZt5qmklvsNwzur2OnateGBfH_M';
 
 async function debugAdminTable() {
-  console.log('🔍 Debugging Admin Table...');
-  console.log('=============================\n');
+  console.log('🔍 Debugging Admin Table Connection...');
+  console.log('======================================\n');
+  
+  console.log('📡 Connection Details:');
+  console.log('- URL:', SUPABASE_URL);
+  console.log('- Key length:', SUPABASE_KEY.length);
+  console.log('- Key starts with:', SUPABASE_KEY.substring(0, 20) + '...');
+  console.log('- Database: umkm-margakaya\n');
   
   try {
-    // 0. Cek konfigurasi supabase
-    console.log('0. Checking Supabase configuration...');
-    console.log('Supabase URL:', (supabase as any).supabaseUrl || 'Not accessible');
-    console.log('Database: umkm-margakaya');
+    // 1. Buat client Supabase dengan timeout
+    console.log('1. Creating Supabase client...');
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false
+      },
+      global: {
+        fetch: (...args) => 
+          fetch(...args).catch(err => {
+            console.error('❌ Fetch error:', err.message);
+            throw err;
+          })
+      }
+    });
     
-    // 1. Coba cek apakah tabel admin ada
-    console.log('\n1. Checking if "admin" table exists...');
+    console.log('✅ Supabase client created');
+    
+    // 2. Test koneksi dasar dengan ping
+    console.log('\n2. Testing basic connection...');
     try {
-      const { data: tableCheck, error: tableError } = await supabase
-        .from('admin')
-        .select('*')
-        .limit(1);
-      
-      if (tableError) {
-        if (tableError.code === '42P01' || tableError.message.includes('does not exist')) {
-          console.log('❌ Table "admin" does not exist in database');
-          console.log('\n💡 Solution: Create the table first with:');
-          console.log(`
-            CREATE TABLE admin (
-              id BIGSERIAL PRIMARY KEY,
-              username VARCHAR(50) UNIQUE NOT NULL,
-              password VARCHAR(100) NOT NULL,
-              created_at TIMESTAMPTZ DEFAULT NOW()
-            );
-            
-            INSERT INTO admin (username, password) VALUES 
-            ('admin', 'admin123');
-          `);
-          
-          // Coba cek tabel lain yang mungkin ada
-          await checkOtherTables();
-          return;
-        } else {
-          console.error('❌ Table access error:', tableError);
-          console.log('Error code:', tableError.code);
-          console.log('Error details:', tableError.details);
+      // Coba akses endpoint Supabase
+      const pingResponse = await fetch(`${SUPABASE_URL}/rest/v1/`, {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
         }
+      });
+      
+      if (pingResponse.ok) {
+        console.log('✅ Supabase endpoint reachable');
       } else {
-        console.log('✅ Table "admin" exists');
-        console.log(`Found ${tableCheck?.length || 0} records`);
+        console.log(`⚠️ Supabase responded with status: ${pingResponse.status}`);
       }
-    } catch (err: any) {
-      console.error('💥 Error checking table:', err.message);
+    } catch (fetchError: any) {
+      console.error('❌ Cannot reach Supabase URL:', fetchError.message);
+      console.log('\n💡 Check:');
+      console.log('- Internet connection');
+      console.log('- URL是否正确 (no typos)');
+      console.log('- CORS/network restrictions');
+      return;
     }
     
-    // 2. Jika tabel ada, lanjutkan dengan query
-    console.log('\n2. Counting total records...');
-    try {
-      const { count, error: countError } = await supabase
-        .from('admin')
-        .select('*', { count: 'exact', head: true });
-      
-      if (countError) {
-        console.error('❌ Count error:', countError);
-      } else {
-        console.log(`📊 Total admin records: ${count || 0}`);
-      }
-    } catch (err: any) {
-      console.error('💥 Count query error:', err.message);
-    }
+    // 3. Test dengan query sederhana
+    console.log('\n3. Testing database query...');
     
-    // 3. Lihat semua data di tabel admin
-    console.log('\n3. Fetching all admin data...');
-    try {
-      const { data: allAdmins, error: fetchError } = await supabase
-        .from('admin')
-        .select('*')
-        .order('created_at', { ascending: false });
+    // Coba query yang sangat sederhana dulu
+    console.log('   Trying simple select...');
+    const { data: simpleData, error: simpleError } = await supabase
+      .from('admin')
+      .select('*')
+      .limit(1);
+    
+    if (simpleError) {
+      console.log('❌ Query error:', simpleError.message);
+      console.log('Error code:', simpleError.code);
+      console.log('Error details:', simpleError.details);
       
-      if (fetchError) {
-        console.error('❌ Fetch error:', fetchError);
-      } else {
-        console.log(`📋 Found ${allAdmins?.length || 0} admin records:`);
-        if (allAdmins && allAdmins.length > 0) {
-          console.table(allAdmins);
+      if (simpleError.code === '42P01') {
+        console.log('\n🎯 DIAGNOSIS: Table "admin" does not exist');
+        console.log('\n💡 SOLUTION: Create the table first');
+        console.log(`
+          CREATE TABLE admin (
+            id BIGSERIAL PRIMARY KEY,
+            username VARCHAR(50) UNIQUE NOT NULL,
+            password VARCHAR(100) NOT NULL,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+          );
           
-          // Cari user 'admin'
-          const adminUser = allAdmins.find(u => u.username === 'admin');
-          if (adminUser) {
-            console.log('\n✅ Found user "admin":');
-            console.log('- ID:', adminUser.id);
-            console.log('- Password:', adminUser.password);
-            console.log('- Created:', adminUser.created_at);
-          } else {
-            console.log('\n❌ User "admin" not found in retrieved data');
+          INSERT INTO admin (username, password) VALUES 
+          ('admin', 'admin123');
+        `);
+      } else if (simpleError.message.includes('JWT')) {
+        console.log('\n🔑 AUTH ERROR: Invalid API key');
+        console.log('Check if your anon key is still valid');
+      } else if (simpleError.message.includes('fetch')) {
+        console.log('\n🌐 NETWORK ERROR: Cannot connect to Supabase');
+        console.log('- Check internet connection');
+        console.log('- Check if Supabase URL is correct');
+        console.log('- Try accessing in browser:', SUPABASE_URL);
+      }
+    } else {
+      console.log('✅ Query successful!');
+      console.log(`Found ${simpleData?.length || 0} records`);
+      if (simpleData && simpleData.length > 0) {
+        console.table(simpleData);
+      }
+    }
+    
+    // 4. Coba RPC function untuk test koneksi
+    console.log('\n4. Testing RPC connection...');
+    try {
+      // Coba panggil fungsi built-in jika ada
+      const { data: rpcData, error: rpcError } = await supabase.rpc('version');
+      
+      if (rpcError) {
+        console.log('⚠️ RPC test failed (normal):', rpcError.message);
+      } else {
+        console.log('✅ RPC connection successful');
+      }
+    } catch (rpcErr: any) {
+      console.log('⚠️ RPC test:', rpcErr.message);
+    }
+    
+    // 5. Cek tabel yang ada di database
+    console.log('\n5. Checking available tables...');
+    try {
+      const { data: tables, error: tablesError } = await supabase
+        .from('pg_tables')
+        .select('tablename')
+        .eq('schemaname', 'public')
+        .limit(10);
+      
+      if (tablesError) {
+        console.log('⚠️ Cannot query pg_tables:', tablesError.message);
+      } else {
+        console.log(`📊 Found ${tables?.length || 0} tables in database:`);
+        if (tables && tables.length > 0) {
+          tables.forEach((table: any, index: number) => {
+            console.log(`   ${index + 1}. ${table.tablename}`);
+          });
+          
+          // Cek apakah ada tabel admin
+          const hasAdminTable = tables.some((t: any) => 
+            t.tablename.toLowerCase() === 'admin'
+          );
+          
+          if (!hasAdminTable) {
+            console.log('\n❌ Table "admin" is NOT in the list');
+            console.log('You need to create it first!');
           }
-        } else {
-          console.log('No data in admin table');
         }
       }
     } catch (err: any) {
-      console.error('💥 Fetch all error:', err.message);
+      console.log('⚠️ Cannot check tables:', err.message);
     }
     
-    // 4. Coba query spesifik untuk username 'admin'
-    console.log('\n4. Querying specifically for username "admin"...');
-    try {
-      const { data: adminUser, error: queryError } = await supabase
-        .from('admin')
-        .select('*')
-        .eq('username', 'admin')
-        .maybeSingle(); // Gunakan maybeSingle untuk menghindari error jika tidak ada data
-      
-      if (queryError) {
-        console.error('❌ Specific query error:', queryError);
-      } else {
-        if (adminUser) {
-          console.log('✅ Found admin user:');
-          console.log('- ID:', adminUser.id);
-          console.log('- Password:', adminUser.password);
-          console.log('- Created:', adminUser.created_at);
-        } else {
-          console.log('❌ No user found with username "admin"');
-        }
-      }
-    } catch (err: any) {
-      console.error('💥 Specific query error:', err.message);
-    }
-    
-    // 5. Test login credentials
-    console.log('\n5. Testing login with credentials (admin/admin123)...');
-    try {
-      const { data: loginTest, error: loginError } = await supabase
-        .from('admin')
-        .select('*')
-        .eq('username', 'admin')
-        .eq('password', 'admin123')
-        .maybeSingle();
-      
-      if (loginError) {
-        console.error('❌ Login query error:', loginError);
-      } else {
-        if (loginTest) {
-          console.log('✅ Login successful! User found:');
-          console.log('- ID:', loginTest.id);
-          console.log('- Created:', loginTest.created_at);
-        } else {
-          console.log('❌ Login failed: No user found with username="admin" and password="admin123"');
-          console.log('\n💡 Possible issues:');
-          console.log('- Username is different');
-          console.log('- Password is different');
-          console.log('- Data is in different table');
-        }
-      }
-    } catch (err: any) {
-      console.error('💥 Login test error:', err.message);
-    }
-    
-    console.log('\n=============================');
-    console.log('🔍 Debug completed');
+    // 6. Test fetch langsung untuk diagnosa
+    console.log('\n6. Direct fetch test...');
+    await testDirectFetch();
     
   } catch (error: any) {
-    console.error('💥 Unexpected error in debug:', error);
-    console.error('Stack trace:', error.stack);
+    console.error('\n💥 UNEXPECTED ERROR:', error.message);
+    console.error('Stack:', error.stack);
+    console.log('\n🔧 Troubleshooting steps:');
+    console.log('1. Check if Supabase project is active');
+    console.log('2. Check if API keys are valid');
+    console.log('3. Check network/firewall settings');
+    console.log('4. Try accessing from different network');
   }
 }
 
-// Fungsi untuk cek tabel lain yang mungkin berisi data admin
-async function checkOtherTables() {
-  console.log('\n🔎 Checking other possible tables...');
+async function testDirectFetch() {
+  const testUrl = `${SUPABASE_URL}/rest/v1/admin?limit=1`;
+  console.log('   Fetching:', testUrl);
   
-  const possibleTables = ['users', 'administrators', 'accounts', 'admins', 'user', 'admin_users'];
-  
-  for (const table of possibleTables) {
-    try {
-      const { data, error } = await supabase
-        .from(table)
-        .select('*')
-        .limit(2);
-      
-      if (!error) {
-        console.log(`\n📋 Found table "${table}" with ${data?.length || 0} records`);
-        if (data && data.length > 0) {
-          console.log('Sample data:');
-          console.table(data);
-          
-          // Cek struktur kolom
-          const firstRow = data[0];
-          console.log('Columns in this table:', Object.keys(firstRow));
-          
-          // Cari kolom yang mirip username/password
-          const usernameCol = Object.keys(firstRow).find(key => 
-            key.toLowerCase().includes('user') || key.toLowerCase().includes('name')
-          );
-          const passwordCol = Object.keys(firstRow).find(key => 
-            key.toLowerCase().includes('pass')
-          );
-          
-          if (usernameCol && passwordCol) {
-            console.log(`✅ Potential admin table found: "${table}"`);
-            console.log(`- Username column: ${usernameCol}`);
-            console.log(`- Password column: ${passwordCol}`);
-          }
-        }
+  try {
+    const response = await fetch(testUrl, {
+      method: 'GET',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
       }
-    } catch (err) {
-      // Table doesn't exist, continue
+    });
+    
+    console.log('   Response status:', response.status, response.statusText);
+    
+    if (response.status === 404) {
+      console.log('   ℹ️ Table not found (404) - need to create it');
+    } else if (response.status === 401) {
+      console.log('   🔒 Unauthorized (401) - check API key');
+    } else if (response.status === 200) {
+      const data = await response.json();
+      console.log('   ✅ Success! Data:', data);
+    } else {
+      console.log('   ⚠️ Unexpected status:', response.status);
+      const text = await response.text();
+      console.log('   Response:', text.substring(0, 200));
+    }
+  } catch (error: any) {
+    console.error('   ❌ Fetch failed:', error.message);
+    console.log('   This indicates a network/connection issue');
+  }
+}
+
+// Tambahkan timeout untuk mencegah hanging
+async function runWithTimeout() {
+  const timeout = 10000; // 10 seconds
+  
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => reject(new Error('Timeout after 10 seconds')), timeout);
+  });
+  
+  try {
+    await Promise.race([
+      debugAdminTable(),
+      timeoutPromise
+    ]);
+  } catch (error: any) {
+    if (error.message.includes('Timeout')) {
+      console.error('\n⏰ CONNECTION TIMEOUT');
+      console.log('Supabase is not responding within 10 seconds');
+      console.log('Possible issues:');
+      console.log('- Internet connection problem');
+      console.log('- Supabase service down');
+      console.log('- Network firewall blocking');
+      console.log('\nCheck: https://status.supabase.com/');
+    } else {
+      throw error;
     }
   }
-  
-  console.log('\n💡 If no table exists, create one with:');
-  console.log('1. Go to Supabase Dashboard → SQL Editor');
-  console.log('2. Run the CREATE TABLE query above');
-  console.log('3. Run this debug script again');
 }
 
-// Tambahkan fungsi untuk test koneksi langsung
-async function testDirectConnection() {
-  console.log('\n🔌 Testing direct Supabase connection...');
-  
-  // Jika ingin test dengan koneksi langsung (tanpa @/lib/supabase)
-  const SUPABASE_URL = 'https://idunloffuvlackboopge.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlkdW5sb2ZmdXZsYWNrYm9vcGdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkyODUyMjgsImV4cCI6MjA4NDg2MTIyOH0.f_1R_tfF3Y1Ojjh9AZt5qmklvsNwzur2OnateGBfH_M';
-  
-  const { createClient } = await import('@supabase/supabase-js');
-  const directSupabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-  
-  const { data, error } = await directSupabase
-    .from('admin')
-    .select('*')
-    .limit(1);
-  
-  if (error) {
-    console.log('Direct connection error:', error.message);
-  } else {
-    console.log('Direct connection successful, data:', data);
-  }
-}
-
-// Jalankan debug
-debugAdminTable();
-
-// Opsional: Uncomment untuk test koneksi langsung
-// testDirectConnection();
+console.log('🚀 Starting debug...\n');
+runWithTimeout().catch(console.error);

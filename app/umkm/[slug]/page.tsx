@@ -344,7 +344,7 @@ export default function UMKMDetailGuestPage() {
             {/* Main Image */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="relative h-64 md:h-96">
+                <div className="relative h-64 md:h-140">
                   {activeImage ? (
                     <img 
                       src={getPublicUrl(activeImage)} 
