@@ -249,7 +249,7 @@ function MainContent({
         />
       </button>
 
-      <div className="p-4 lg:p-6">{children}</div>
+      <div className="p-3 sm:p-4 lg:p-6">{children}</div>
     </motion.main>
   );
 }

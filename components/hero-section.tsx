@@ -94,7 +94,7 @@ export function HeroSection({ title, subtitle, stats }: HeroProps) {
 
   return (
     <motion.div
-      className="relative py-24 px-6 text-center overflow-hidden"
+      className="relative py-16 sm:py-24 px-4 sm:px-6 text-center overflow-hidden"
       style={{
         minHeight: '600px',
       }}
@@ -132,21 +132,21 @@ export function HeroSection({ title, subtitle, stats }: HeroProps) {
         animate="visible"
       >
         <motion.h1
-          className="text-5xl font-bold text-gray-800 mb-4"
+          className="text-3xl sm:text-5xl font-bold text-gray-800 mb-4"
           variants={itemVariants}
         >
           {title}
         </motion.h1>
 
         <motion.p
-          className="text-xl text-gray-700 mb-8"
+          className="text-base sm:text-xl text-gray-700 mb-8"
           variants={itemVariants}
         >
           {subtitle}
         </motion.p>
 
         <motion.div
-          className="flex gap-4 justify-center mb-8"
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8"
           variants={itemVariants}
         >
           <motion.div variants={buttonVariants} whileHover="hover">
@@ -154,7 +154,7 @@ export function HeroSection({ title, subtitle, stats }: HeroProps) {
               <Button
                 size="lg"
                 style={{ backgroundColor: '#2F6B4F' }}
-                className="text-white"
+                className="text-white w-full sm:w-auto"
               >
                 Lihat UMKM
               </Button>
@@ -166,7 +166,7 @@ export function HeroSection({ title, subtitle, stats }: HeroProps) {
               <Button
                 size="lg"
                 variant="outline"
-                className="text-[#2F6B4F] border-[#2F6B4F] bg-amber-50 hover:bg-[#DFDAD0]/50"
+                className="text-[#2F6B4F] border-[#2F6B4F] bg-amber-50 hover:bg-[#DFDAD0]/50 w-full sm:w-auto"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Ajukan UMKM
@@ -175,7 +175,7 @@ export function HeroSection({ title, subtitle, stats }: HeroProps) {
           </motion.div>
         </motion.div>
 
-        <motion.div className="flex justify-center gap-8 text-gray-800">
+        <motion.div className="flex flex-wrap justify-center gap-6 sm:gap-8 text-gray-800">
           {stats.map((stat, index) => (
             <motion.div
               key={index}
@@ -185,7 +185,7 @@ export function HeroSection({ title, subtitle, stats }: HeroProps) {
               animate="visible"
             >
               <motion.div
-                className="text-2xl font-bold"
+                className="text-xl sm:text-2xl font-bold"
                 whileHover={{ scale: 1.1 }}
               >
                 {stat.value}
@@ -193,26 +193,19 @@ export function HeroSection({ title, subtitle, stats }: HeroProps) {
               <div className="text-sm">{stat.label}</div>
             </motion.div>
           ))}
-          <motion.div
-            custom={stats.length}
-            variants={statsVariants}
-            initial="hidden"
-            animate="visible"
-            className="w-px bg-[#DFDAD0]"
-          />
         </motion.div>
       </motion.div>
 
       {/* Navigation buttons */}
       <button
         onClick={goToPrevious}
-        className="absolute left-6 top-1/2 transform -translate-y-1/2 z-20 bg-[#DFDAD0]/50 hover:bg-[#DFDAD0]/80 p-2 rounded-full transition-all"
+        className="hidden sm:block absolute left-6 top-1/2 transform -translate-y-1/2 z-20 bg-[#DFDAD0]/50 hover:bg-[#DFDAD0]/80 p-2 rounded-full transition-all"
       >
         <ChevronLeft className="w-6 h-6 text-[#2F6B4F]" />
       </button>
       <button
         onClick={goToNext}
-        className="absolute right-6 top-1/2 transform -translate-y-1/2 z-20 bg-[#DFDAD0]/50 hover:bg-[#DFDAD0]/80 p-2 rounded-full transition-all"
+        className="hidden sm:block absolute right-6 top-1/2 transform -translate-y-1/2 z-20 bg-[#DFDAD0]/50 hover:bg-[#DFDAD0]/80 p-2 rounded-full transition-all"
       >
         <ChevronRight className="w-6 h-6 text-[#2F6B4F]" />
       </button>

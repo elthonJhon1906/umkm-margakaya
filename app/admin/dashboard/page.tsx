@@ -332,8 +332,8 @@ export default function AdminDashboardPage() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
       >
-        <h1 className="text-3xl font-bold text-[#2F6B4F] mb-2">Dashboard Admin UMKM</h1>
-        <p className="text-[#8B7B6F]">Kelola semua UMKM yang terdaftar di Desa Marga Kaya</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#2F6B4F] mb-2">Dashboard Admin UMKM</h1>
+        <p className="text-sm sm:text-base text-[#8B7B6F]">Kelola semua UMKM yang terdaftar di Desa Marga Kaya</p>
       </motion.div>
 
       {/* Loading State */}
@@ -368,7 +368,7 @@ export default function AdminDashboardPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-white p-4 rounded-lg shadow-sm border border-gray-100"
+            className="flex flex-col lg:flex-row gap-4 justify-between items-stretch lg:items-center bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-100"
           >
             <div className="flex-1 w-full">
               <div className="relative max-w-full">
@@ -383,12 +383,12 @@ export default function AdminDashboardPage() {
               </div>
             </div>
             
-            <div className="flex flex-wrap gap-3">
-              <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-[#2F6B4F] focus:border-transparent"
+                  className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-[#2F6B4F] focus:border-transparent"
                 >
                   {categories.map(category => (
                     <option key={category} value={category}>{category}</option>
@@ -398,7 +398,7 @@ export default function AdminDashboardPage() {
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-[#2F6B4F] focus:border-transparent"
+                  className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-[#2F6B4F] focus:border-transparent"
                 >
                   <option value="Semua">Semua Status</option>
                   <option value="Aktif">Aktif</option>
@@ -418,7 +418,7 @@ export default function AdminDashboardPage() {
               )}
               
               <Link href="/admin/umkm/create">
-                <Button className="bg-[#2F6B4F] text-white hover:bg-[#2F6B4F]/90">
+                <Button className="w-full sm:w-auto bg-[#2F6B4F] text-white hover:bg-[#2F6B4F]/90">
                   <Plus className="w-4 h-4 mr-2" />
                   Tambah UMKM
                 </Button>
@@ -431,7 +431,7 @@ export default function AdminDashboardPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4"
           >
             <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
               <p className="text-sm text-[#8B7B6F] mb-1">Total UMKM</p>
@@ -512,7 +512,7 @@ export default function AdminDashboardPage() {
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {filteredUMKM.map((umkm, index) => {
                   const statusText = UMKMHelpers.getStatusText(umkm.status);
                   const statusColor = UMKMHelpers.getStatusColor(umkm.status);
