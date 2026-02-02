@@ -35,12 +35,6 @@ export function Navbar({ title }: NavbarProps) {
           >
             Beranda
           </a>
-          <a
-            href="#kontak"
-            className="text-sm text-[#5D5D5D] hover:text-[#2F6B4F]"
-          >
-            Kontak
-          </a>
 
           {isLoggedIn ? (
             <div className="flex items-center gap-3">

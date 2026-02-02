@@ -37,12 +37,24 @@ export function HomePageContent() {
         </div>
       </div>
 
-      {/* UMKM Cards Section dengan Dummy Data */}
-      <UMKMCardsSection />
+      <UMKMCardsSection id='daftar-umkm'/>
 
       {/* Footer */}
       <footer className="bg-[#0c4630] text-[#DFDAD0] py-8 px-6">
-        <div className="max-w-7xl mx-auto flex flex-col gap-6 sm:gap-8">
+        <div className="max-w-full mx-auto grid grid-cols-3 gap-6 sm:gap-8">
+          
+          <div className='flex items-center justify-start'>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm text-[#DFDAD0]">
+            <Image
+              src="/logo.png"
+              alt="KKN Unila 2026 Periode 1"
+              width={40}
+              height={40}
+            />
+            <span className="text-center">KKN Universitas Lampung Tahun 2026 Periode 1</span>
+            </div>
+          </div>
+          
           <div className="text-center">
             <p className="mb-2" style={{ color: '#FFFFFF' }}>
               © 2024 UMKM Desa Marga Kaya
@@ -52,15 +64,6 @@ export function HomePageContent() {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm text-[#DFDAD0]">
-            <Image
-              src="/logo.png"
-              alt="KKN Unila 2026 Periode 1"
-              width={40}
-              height={40}
-            />
-            <span className="text-center">KKN Universitas Lampung Tahun 2026 Periode 1</span>
-          </div>
         </div>
       </footer>
     </>

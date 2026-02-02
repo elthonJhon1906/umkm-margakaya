@@ -22,7 +22,8 @@ interface UmkmImage {
   image_url: string;
 }
 
-export function UMKMCardsSection() {
+
+export function UMKMCardsSection({id}: {id: string}) {
   const [umkms, setUmkms] = useState<UMKMCardProps[]>([]);
   const [umkmImages, setUmkmImages] = useState<Record<number, string[]>>({});
   const [loading, setLoading] = useState(true);
@@ -241,7 +242,7 @@ export function UMKMCardsSection() {
   }
 
   return (
-    <div className="py-16 px-6 bg-white">
+    <div className="py-16 px-6 bg-white" id={id}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-3 text-green-800">
